@@ -2,7 +2,7 @@ package hexreader
 
 import (
 	"errors"
-	"encoding/hex"
+	//"encoding/hex"
 )
 
 //Intel hex record type
@@ -40,11 +40,15 @@ func Decode(hs string) (*DataSeg, error) {
 	hs = hs[1:]
 
 	//Convert the Hex Ascii to binary
+	/*
 	b, err := hex.DecodeString(hs)
 	if err != nil {
 		return nil, errors.New("[hexreader] Decode::Unable to decode hex string.")
 	}
+	*/
 
 	//Check the checksum
+	
 
+	return new(DataSeg), nil
 }
