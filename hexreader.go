@@ -36,7 +36,7 @@ type Rec struct {
 	Data []byte
 }
 
-func Decode(hs string) (*DataSeg, error) {
+func Decode(hs string) (*Rec, error) {
 	//Check for an empty string
 	if hs == "" {
 		return nil, errors.New("[hexreader] Decode::Given an empty string")
@@ -55,6 +55,19 @@ func Decode(hs string) (*DataSeg, error) {
 
 	//Check the checksum
 	
+	//Allocate memory for a new record
+	rec := new(Rec)
 
-	return new(DataSeg), nil
+	return rec, nil
+}
+
+func calcChecksum(b []byte) uint8 {
+	var s int
+
+	//Sum up all the data bytes
+	for _, n := range b {
+		s += int(n)
+	}
+
+	return byte(-s)
 }
