@@ -30,6 +30,12 @@ type DataSeg struct {
 	Data []byte
 }
 
+type Rec struct {
+	rType RecType
+	Adr uint16
+	Data []byte
+}
+
 func Decode(hs string) (*DataSeg, error) {
 	//Check for an empty string
 	if hs == "" {
