@@ -19,3 +19,8 @@ const (
 	ELA
 	SLA
 )
+
+type DataSeg struct {
+	Adr uint32
+	Data []byte
+}
