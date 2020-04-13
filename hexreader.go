@@ -34,7 +34,9 @@ func Decode(hs string) (*DataSeg, error) {
 	if hs == "" {
 		return nil, errors.New("[hexreader] Decode::Given an empty string")
 	}
+
 	//Remove the : character 
+	hs = hs[1:]
 	//Convert the Hex Ascii to binary
 	//Check the checksum
 
