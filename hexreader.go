@@ -1,5 +1,9 @@
 package hexreader
 
+import (
+	"errors"
+)
+
 //Intel hex record type
 type RecType int
 
@@ -23,4 +27,15 @@ const (
 type DataSeg struct {
 	Adr uint32
 	Data []byte
+}
+
+func Decode(hs string) (*DataSeg, error) {
+	//Check for an empty string
+	if hs == "" {
+		return nil, errors.New("[hexreader] Decode::Given an empty string")
+	}
+	//Remove the : character 
+	//Convert the Hex Ascii to binary
+	//Check the checksum
+
 }
