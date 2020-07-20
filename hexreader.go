@@ -1,12 +1,12 @@
 package hexreader
 
 import (
-	"errors"
 	//"encoding/hex"
+	"errors"
 )
 
 //Intel hex record type
-type RecType int
+type RecordType int
 
 /*
 	DATA - Data record type
@@ -17,57 +17,43 @@ type RecType int
 	SLA - Start linear address
 */
 const (
-	DATA	RecType = iota
+	DATA	RecordType = iota
 	EOF	
 	EST
 	SSA
 	ELA
 	SLA
+	ERROR
 )
 
-type DataSeg struct {
-	Adr uint32
+type IntelHexReader interface {
+	DecodeString(IntelHexString string) (*Record, error)
+	// DecodeBytes(IntelHexBytes []byte) (*Record, RecordType, error)
+	// DecodeFile(IntelHexFile string) (*[]Record, error)
+}
+
+type IntelHex struct {
+
+}
+
+type Record struct {
+	RecordType RecordType
+	Address uint32
 	Data []byte
 }
 
-type Rec struct {
-	rType RecType
-	Adr uint16
-	Data []byte
+func New() IntelHexReader {
+	return new(IntelHex)
 }
 
-func Decode(hs string) (*Rec, error) {
-	//Check for an empty string
-	if hs == "" {
-		return nil, errors.New("[hexreader] Decode::Given an empty string")
+func (IH *IntelHex) DecodeString(IntelHexString string) (*Record, error) {
+	// Check to see if intel hex string starts with a semi colon
+	if IntelHexString[1:] != ":" {
+		return nil, errors.New("Intel Hex string does not start with :")
 	}
 
-	//Remove the : character 
-	hs = hs[1:]
+	// Check to see if intel hex string has enough bytes
 
-	//Convert the Hex Ascii to binary
-	/*
-	b, err := hex.DecodeString(hs)
-	if err != nil {
-		return nil, errors.New("[hexreader] Decode::Unable to decode hex string.")
-	}
-	*/
-
-	//Check the checksum
-	
-	//Allocate memory for a new record
-	rec := new(Rec)
-
-	return rec, nil
-}
-
-func calcChecksum(b []byte) uint8 {
-	var s int
-
-	//Sum up all the data bytes
-	for _, n := range b {
-		s += int(n)
-	}
-
-	return byte(-s)
+	temp := new(Record)
+	return temp, nil
 }

@@ -4,11 +4,14 @@ import (
 	"testing"
 )
 
-func TestDecode(t *testing.T) {
-	s := ":04000005000000CD2A"
+func TestDecodeString(t *testing.T) {
+	hexreader := New()
 
-	_, err := Decode(s)
-	if err != nil {
-		t.Errorf("Received error [%s]", err)
+	dataRecordString := ":10246200464C5549442050524F46494C4500464C33"
+
+	record, err := hexreader.DecodeString(dataRecordString)
+
+	if record. != got {
+		t.Error("Wrong")
 	}
 }
