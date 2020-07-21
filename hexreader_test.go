@@ -9,9 +9,9 @@ func TestDecodeString(t *testing.T) {
 
 	dataRecordString := ":10246200464C5549442050524F46494C4500464C33"
 
-	record, err := hexreader.DecodeString(dataRecordString)
+	record, _ := hexreader.DecodeString(dataRecordString)
 
-	if record. != got {
-		t.Error("Wrong")
+	if record.RecordType != DataRecord {
+		t.Errorf("Wanted a DataRecord but got [%d]", record.RecordType)
 	}
 }

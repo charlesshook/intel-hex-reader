@@ -1,31 +1,23 @@
 package hexreader
 
 import (
-	//"encoding/hex"
+	"encoding/hex"
 	"errors"
 )
 
 //Intel hex record type
 type RecordType int
 
-/*
-	DATA - Data record type
-	EOF - End of file record type
-	EST - Extended segment address record type
-	SSA - Start segment address record type
-	ELA - Extended linear address record type
-	SLA - Start linear address
-*/
 const (
-	DATA	RecordType = iota
-	EOF	
-	EST
-	SSA
-	ELA
-	SLA
-	ERROR
+	DataRecord	RecordType = iota // Data record type.
+	EndOfFileRecord // End of file record.
+	ExtendedSegmentAddressRecord // Extended segment address record.
+	ExtendedLinearAddressRecord // Extended linear address record
+	StartLinearAddressRecord // Start linear address record (MDK-ARM only).
+	ErrorRecord // Used if error in a record.
 )
 
+// Interface that defines functions that can be used on an intel hex reader.
 type IntelHexReader interface {
 	DecodeString(IntelHexString string) (*Record, error)
 	// DecodeBytes(IntelHexBytes []byte) (*Record, RecordType, error)
@@ -36,10 +28,11 @@ type IntelHex struct {
 
 }
 
+// Contains info about one record.
 type Record struct {
-	RecordType RecordType
-	Address uint32
-	Data []byte
+	RecordType RecordType // The type of record.
+	Address uint32 // Address for bytes to be written to if data record.
+	Data []byte // Data bytes if a data record.
 }
 
 func New() IntelHexReader {
@@ -47,13 +40,84 @@ func New() IntelHexReader {
 }
 
 func (IH *IntelHex) DecodeString(IntelHexString string) (*Record, error) {
-	// Check to see if intel hex string starts with a semi colon
-	if IntelHexString[1:] != ":" {
-		return nil, errors.New("Intel Hex string does not start with :")
+	// Check for an empty string.
+	if IntelHexString == "" {
+		return &Record{
+			RecordType: ErrorRecord,
+			Address:    0,
+			Data:       nil,
+		}, errors.New("Given a blank string.")
 	}
 
-	// Check to see if intel hex string has enough bytes
+	// Check to see if intel hex string starts with a semi colon.
+	if IntelHexString[0:1] != ":" {
+		return &Record{
+			RecordType: ErrorRecord,
+			Address:    0,
+			Data:       nil,
+		}, errors.New("Intel Hex string does not start with :")
+	}
 
-	temp := new(Record)
-	return temp, nil
+	// Decode intel hex string into hex bytes.
+	stringBytes, err := hex.DecodeString(IntelHexString[1:])
+	if err != nil {
+		return &Record{
+			RecordType: ErrorRecord,
+			Address:    0,
+			Data:       nil,
+		}, err
+	}
+
+	// Check to see if min number of bytes.
+	if len(stringBytes) < 4 {
+		return &Record{
+			RecordType: ErrorRecord,
+			Address:    0,
+			Data:       nil,
+		}, errors.New("Record does not have atleast four bytes.")
+	}
+
+	// Create a new record and make sure not nil.
+	record := new(Record)
+	if record == nil {
+		return &Record{
+			RecordType: ErrorRecord,
+			Address:    0,
+			Data:       nil,
+		}, errors.New("Could not allocate space for a new record.")
+	}
+
+	switch RecordType(stringBytes[3]) {
+	case DataRecord:
+		record.RecordType = DataRecord
+
+		recordLength := stringBytes[0]
+		// Todo : Make sure correct number of bytes
+
+		// Add the data bytes to the records slice.
+		for i := 4; i < len(stringBytes); i++ {
+			record.Data = append(record.Data, stringBytes[i])
+		}
+
+		return record, nil
+	case EndOfFileRecord:
+		record.RecordType = EndOfFileRecord
+		return record, nil
+	case ExtendedSegmentAddressRecord:
+		record.RecordType = ExtendedSegmentAddressRecord
+		return record, nil
+	case ExtendedLinearAddressRecord:
+		record.RecordType = ExtendedLinearAddressRecord
+		return record, nil
+	case StartLinearAddressRecord:
+		record.RecordType = StartLinearAddressRecord
+		return record, nil
+	default:
+		return &Record{
+			RecordType: ErrorRecord,
+			Address:    0,
+			Data:       nil,
+		}, errors.New("Not a valid record type.")
+	}
 }
+
