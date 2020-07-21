@@ -17,17 +17,6 @@ const (
 	ErrorRecord // Used if error in a record.
 )
 
-// Interface that defines functions that can be used on an intel hex reader.
-type IntelHexReader interface {
-	DecodeString(IntelHexString string) (*Record, error)
-	// DecodeBytes(IntelHexBytes []byte) (*Record, RecordType, error)
-	// DecodeFile(IntelHexFile string) (*[]Record, error)
-}
-
-type IntelHex struct {
-
-}
-
 // Contains info about one record.
 type Record struct {
 	RecordType RecordType // The type of record.
@@ -35,11 +24,7 @@ type Record struct {
 	Data []byte // Data bytes if a data record.
 }
 
-func New() IntelHexReader {
-	return new(IntelHex)
-}
-
-func (IH *IntelHex) DecodeString(IntelHexString string) (*Record, error) {
+func DecodeString(IntelHexString string) (*Record, error) {
 	// Check for an empty string.
 	if IntelHexString == "" {
 		return &Record{
