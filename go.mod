@@ -1,3 +1,3 @@
-module charlesshook/intel-hex-reader
+module charlesshook/intelhex
 
 go 1.14
