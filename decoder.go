@@ -1,4 +1,4 @@
-package hexreader
+package intelhex
 
 import (
 	"encoding/hex"
