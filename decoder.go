@@ -8,49 +8,29 @@ import (
 func (i *Interpreter) DecodeString(IntelHexString string) (*Record, error) {
 	// Check for an empty string.
 	if IntelHexString == "" {
-		return &Record{
-			RecordType: ErrorRecord,
-			Address:    0,
-			Data:       nil,
-		}, errors.New("Given a blank string.")
+		return nil, errors.New("Given a blank string.")
 	}
 
 	// Check to see if intel hex string starts with a semi colon.
 	if IntelHexString[0:1] != ":" {
-		return &Record{
-			RecordType: ErrorRecord,
-			Address:    0,
-			Data:       nil,
-		}, errors.New("Intel Hex string does not start with :")
+		return nil, errors.New("Intel Hex string does not start with :")
 	}
 
 	// Decode intel hex string into hex bytes.
 	stringBytes, err := hex.DecodeString(IntelHexString[1:])
 	if err != nil {
-		return &Record{
-			RecordType: ErrorRecord,
-			Address:    0,
-			Data:       nil,
-		}, err
+		return nil, err
 	}
 
 	// Check to see if min number of bytes.
 	if len(stringBytes) < 4 {
-		return &Record{
-			RecordType: ErrorRecord,
-			Address:    0,
-			Data:       nil,
-		}, errors.New("Record does not have atleast four bytes.")
+		return nil, errors.New("Record does not have atleast four bytes.")
 	}
 
 	// Create a new record and make sure not nil.
 	record := new(Record)
 	if record == nil {
-		return &Record{
-			RecordType: ErrorRecord,
-			Address:    0,
-			Data:       nil,
-		}, errors.New("Could not allocate space for a new record.")
+		return nil, errors.New("Could not allocate space for a new record.")
 	}
 
 	switch RecordType(stringBytes[3]) {
@@ -79,11 +59,7 @@ func (i *Interpreter) DecodeString(IntelHexString string) (*Record, error) {
 		record.RecordType = StartLinearAddressRecord
 		return record, nil
 	default:
-		return &Record{
-			RecordType: ErrorRecord,
-			Address:    0,
-			Data:       nil,
-		}, errors.New("Not a valid record type.")
+		return nil, errors.New("Not a valid record type.")
 	}
 }
 
