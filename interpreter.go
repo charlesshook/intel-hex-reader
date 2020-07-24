@@ -5,5 +5,5 @@ type Interpreter struct {
 }
 
 func New() *Interpreter {
-	return new Interpreter{}
+	return new(Interpreter)
 }
