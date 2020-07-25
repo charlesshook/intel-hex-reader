@@ -26,3 +26,16 @@ type Interpreter struct {
 func New() *Interpreter {
 	return new(Interpreter)
 }
+
+func calculateChecksum(bytes []byte) (checksum byte) {
+	for i := 0; i < len(bytes); i++ {
+		checksum += bytes[i]
+	}
+
+	checksum += 0x01
+
+	// Flip the bits
+	checksum = 1 * -checksum
+
+	return checksum
+}
